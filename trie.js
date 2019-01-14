@@ -27,10 +27,47 @@ class Trie {
 
   contains(word) {
     // does trie contain word?
+    let node = this.root;
+    while(word.length > 1){
+      if(!node.children[word[0]]){
+        return false;
+      } else {
+        node = node.children[word[0]];
+        word = word.substr(1)
+      }
+    }
+    return (node.children[word[0]] && node.children[word[0]].end ? true : false)
   }
   
   remove(word) {
     // remove word from trie
+    if(!this.root) {
+      return;
+    }
+    if(this.contains(word)) {
+      this.removeNode(this.root, word);
+    }
+  }
+
+  removeNode(node, word){
+    if(!node || !word){
+      return;
+    }
+    let letter = word[0];
+    let child = node.children[letter];
+    if (child) {
+      let remainder = word.substring(1);
+      if (remainder) {
+        this.removeNode(child, remainder);
+      } else {
+        if (Object.keys(child.children).length === 0) {
+          delete node.children[letter];
+        } else {
+          child.end = false;
+        }
+      }
+    }
+
   }
 
   depthFirstSearch(prefix) {
